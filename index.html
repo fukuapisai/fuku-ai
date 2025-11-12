@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kirim request dan bug pada projek kami</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #000;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            font-family: 'Exo 2', sans-serif;
+            perspective: 1000px;
+        }
+        
+        .universe {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        
+        .star {
+            position: absolute;
+            background: #fff;
+            border-radius: 50%;
+            animation: twinkle 5s infinite ease-in-out;
+        }
+        
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 1; }
+        }
+        
+        .loader-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+            transform-style: preserve-3d;
+            animation: float 8s infinite ease-in-out;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate3d(0.2, 1, 0.1, 0deg); }
+            33% { transform: translateY(-20px) rotate3d(0.2, 1, 0.1, 5deg); }
+            66% { transform: translateY(10px) rotate3d(0.2, 1, 0.1, -5deg); }
+        }
+        
+        .hologram {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            margin: 0 auto;
+            transform-style: preserve-3d;
+            transform: rotateX(60deg) rotateZ(45deg);
+            animation: rotate 20s infinite linear;
+        }
+        
+        @keyframes rotate {
+            0% { transform: rotateX(60deg) rotateZ(0); }
+            100% { transform: rotateX(60deg) rotateZ(360deg); }
+        }
+        
+        .shape {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            animation: pulse 4s infinite ease-in-out;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1) rotate3d(1, 1, 1, 0deg); }
+            50% { transform: scale(1.2) rotate3d(1, 1, 1, 10deg); }
+        }
+        
+        .face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0.8;
+            border: 2px solid rgba(0, 255, 255, 0.7);
+            background: rgba(0, 100, 255, 0.2);
+            box-shadow: 0 0 20px rgba(0, 200, 255, 0.5);
+        }
+        
+        .front {
+            transform: translateZ(75px);
+        }
+        
+        .back {
+            transform: translateZ(-75px) rotateY(180deg);
+        }
+        
+        .top {
+            transform: rotateX(90deg) translateZ(75px);
+        }
+        
+        .bottom {
+            transform: rotateX(-90deg) translateZ(75px);
+        }
+        
+        .left {
+            transform: rotateY(-90deg) translateZ(75px);
+        }
+        
+        .right {
+            transform: rotateY(90deg) translateZ(75px);
+        }
+        
+        .energy-core {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 40px;
+            height: 40px;
+            background: radial-gradient(circle, #00ffff, #ff00ff, #ffff00);
+            border-radius: 50%;
+            transform: translate(-50%, -50%) translateZ(0);
+            box-shadow: 0 0 50px #00ffff, 0 0 100px #ff00ff;
+            animation: core-pulse 2s infinite alternate;
+        }
+        
+        @keyframes core-pulse {
+            0% { transform: translate(-50%, -50%) translateZ(0) scale(1); }
+            100% { transform: translate(-50%, -50%) translateZ(0) scale(1.5); }
+        }
+        
+        .energy-beam {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 10px;
+            height: 200px;
+            background: linear-gradient(to bottom, transparent, #00ffff, #ff00ff, transparent);
+            transform: translate(-50%, -50%) translateZ(0) rotateZ(90deg);
+            opacity: 0.7;
+            animation: beam-rotate 4s infinite linear;
+            transform-origin: center;
+        }
+        
+        @keyframes beam-rotate {
+            0% { transform: translate(-50%, -50%) translateZ(0) rotateZ(0); }
+            100% { transform: translate(-50%, -50%) translateZ(0) rotateZ(360deg); }
+        }
+        
+        .particle {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #00ffff;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) translateZ(0);
+            box-shadow: 0 0 10px #00ffff, 0 0 20px #ff00ff;
+        }
+        
+        .orbit {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%) rotateX(90deg);
+        }
+        
+        .loading-text {
+            color: white;
+            font-size: 28px;
+            letter-spacing: 4px;
+            margin: 40px 0 20px;
+            text-shadow: 0 0 10px #00ffff, 0 0 20px #ff00ff;
+            animation: text-glow 2s infinite alternate;
+        }
+        
+        @keyframes text-glow {
+            0% { text-shadow: 0 0 10px #00ffff, 0 0 20px #ff00ff; }
+            100% { text-shadow: 0 0 20px #00ffff, 0 0 40px #ff00ff, 0 0 60px #ffff00; }
+        }
+        
+        .progress-container {
+            width: 100%;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 30px auto;
+            transform: translateZ(20px);
+        }
+        
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #00ffff, #ff00ff, #ffff00);
+            border-radius: 10px;
+            animation: progress 4s ease-in-out forwards;
+            box-shadow: 0 0 10px #00ffff, 0 0 20px #ff00ff;
+        }
+        
+        @keyframes progress {
+            0% { width: 0%; }
+            20% { width: 25%; }
+            40% { width: 50%; }
+            60% { width: 75%; }
+            80% { width: 90%; }
+            100% { width: 100%; }
+        }
+        
+        .redirect-text {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 16px;
+            margin-top: 30px;
+            opacity: 0;
+            animation: fadeIn 1s ease-in-out 3.5s forwards;
+            text-shadow: 0 0 5px #00ffff;
+        }
+        
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+        
+        .cyber-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(transparent 24px, rgba(0, 100, 255, 0.1) 25px), 
+                        linear-gradient(90deg, transparent 24px, rgba(0, 100, 255, 0.1) 25px);
+            background-size: 25px 25px;
+            z-index: -1;
+            perspective: 1000px;
+            transform-style: preserve-3d;
+            transform: rotateX(75deg);
+            animation: grid-move 10s infinite linear;
+        }
+        
+        @keyframes grid-move {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 25px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="cyber-grid"></div>
+    <div class="universe" id="universe"></div>
+    <div class="loader-container">
+        <div class="hologram">
+            <div class="shape">
+                <div class="face front"></div>
+                <div class="face back"></div>
+                <div class="face top"></div>
+                <div class="face bottom"></div>
+                <div class="face left"></div>
+                <div class="face right"></div>
+            </div>
+            <div class="energy-core"></div>
+            <div class="energy-beam"></div>
+            <div class="orbit" style="width: 200px; height: 200px; animation: orbit-rotate 10s infinite linear;"></div>
+            <div class="orbit" style="width: 250px; height: 250px; animation: orbit-rotate 15s infinite linear reverse;"></div>
+            <div class="particle" id="particle1"></div>
+            <div class="particle" id="particle2"></div>
+            <div class="particle" id="particle3"></div>
+            <div class="particle" id="particle4"></div>
+        </div>
+        <div class="loading-text">Loading</div>
+        <div class="progress-container">
+            <div class="progress-bar"></div>
+        </div>
+        <div class="redirect-text"></div>
+    </div>
+    <script>
+        function createStars() {
+            const universe = document.getElementById('universe');
+            const starCount = 200;
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+                const size = Math.random() * 3;
+                const posX = Math.random() * 100;
+                const posY = Math.random() * 100;
+                const delay = Math.random() * 5;
+                const duration = 2 + Math.random() * 3;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.left = `${posX}%`;
+                star.style.top = `${posY}%`;
+                star.style.animationDelay = `${delay}s`;
+                star.style.animationDuration = `${duration}s`;
+                universe.appendChild(star);
+            }
+        }
+        function animateParticles() {
+            const particles = [
+                document.getElementById('particle1'),
+                document.getElementById('particle2'),
+                document.getElementById('particle3'),
+                document.getElementById('particle4')
+            ];
+            const radii = [100, 125];
+            const angles = [0, Math.PI/2, Math.PI, 3*Math.PI/2];
+            particles.forEach((particle, index) => {
+                const radius = radii[index % 2];
+                let angle = angles[index];
+                const speed = 0.01 * (index % 2 + 1);
+                
+                function move() {
+                    angle += speed;
+                    const x = radius * Math.cos(angle);
+                    const y = radius * Math.sin(angle);
+                    
+                    particle.style.transform = `translate(-50%, -50%) translate3d(${x}px, ${y}px, 0)`;
+                    
+                    requestAnimationFrame(move);
+                }
+                
+                move();
+            });
+        }
+        const styleSheet = document.createElement('style');
+        styleSheet.innerHTML = `
+            @keyframes orbit-rotate {
+                0% { transform: translate(-50%, -50%) rotateX(90deg) rotateZ(0); }
+                100% { transform: translate(-50%, -50%) rotateX(90deg) rotateZ(360deg); }
+            }
+        `;
+        document.head.appendChild(styleSheet);
+        setTimeout(() => {
+            window.location.href = '/ZmVlZGJhY2tidWc/';
+        }, 5000);
+        document.addEventListener('DOMContentLoaded', () => {
+            createStars();
+            animateParticles();
+        });
+    </script>
+</body>
+</html>
